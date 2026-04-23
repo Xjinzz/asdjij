@@ -562,12 +562,38 @@ def persist_last_submitted_price(
     if runtime_config is not None:
         runtime_config.setdefault("pricing", {})
         runtime_config["pricing"]["last_submitted_price"] = normalized_price
+        if normalized_price is None:
+            runtime_config["pricing"]["sticky_increment_step"] = None
+        else:
+            existing_step = runtime_config["pricing"].get("sticky_increment_step")
+            if existing_step in (None, "", 0, "0"):
+                increment_ratio = max(
+                    0.0,
+                    parse_float_config(runtime_config.get("automation", {}).get("sticky_increment_ratio"), 0.0),
+                )
+                if increment_ratio > 0:
+                    rounding = str(runtime_config["pricing"].get("rounding", "floor_int"))
+                    step = choose_rounding(float(normalized_price) * increment_ratio, rounding)
+                    runtime_config["pricing"]["sticky_increment_step"] = max(1, int(step))
     try:
         config = load_json(config_path)
     except Exception:
         return
     config.setdefault("pricing", {})
     config["pricing"]["last_submitted_price"] = normalized_price
+    if normalized_price is None:
+        config["pricing"]["sticky_increment_step"] = None
+    else:
+        existing_step = config["pricing"].get("sticky_increment_step")
+        if existing_step in (None, "", 0, "0"):
+            increment_ratio = max(
+                0.0,
+                parse_float_config(config.get("automation", {}).get("sticky_increment_ratio"), 0.0),
+            )
+            if increment_ratio > 0:
+                rounding = str(config["pricing"].get("rounding", "floor_int"))
+                step = choose_rounding(float(normalized_price) * increment_ratio, rounding)
+                config["pricing"]["sticky_increment_step"] = max(1, int(step))
     config_path.write_text(json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
@@ -904,12 +930,18 @@ def apply_sticky_increment(config: dict[str, Any], final_price: int) -> tuple[in
         previous = None
     if previous is None or previous <= 0:
         return int(final_price), None
-    if int(final_price) != int(previous):
+    step_value = pricing.get("sticky_increment_step")
+    try:
+        step = int(step_value) if step_value not in (None, "") else None
+    except Exception:
+        step = None
+    if step is None or step <= 0:
+        step = choose_rounding(float(previous) * increment_ratio, str(pricing.get("rounding", "floor_int")))
+        step = max(1, int(step))
+    minimum_price = int(previous) + int(step)
+    if int(final_price) >= minimum_price:
         return int(final_price), None
-    raised = choose_rounding(float(final_price) * (1.0 + increment_ratio), str(pricing.get("rounding", "floor_int")))
-    if raised <= int(final_price):
-        raised = int(final_price) + 1
-    return int(raised), f"sticky_increment previous={previous} ratio={increment_ratio:.4f} -> {raised}"
+    return int(minimum_price), f"sticky_increment linear previous={previous} step={step} -> {minimum_price}"
 
 
 def compute_bid_price(

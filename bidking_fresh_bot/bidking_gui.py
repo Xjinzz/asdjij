@@ -177,7 +177,7 @@ class BidKingApp:
         row4.pack(fill="x", pady=(8, 0))
         ttk.Label(row4, text="防黏递增比例").pack(side="left")
         ttk.Entry(row4, textvariable=self.sticky_increment_var, width=10).pack(side="left", padx=(8, 12))
-        ttk.Label(row4, text="若本回合与上回合出价相同，则自动递增该百分比").pack(side="left")
+        ttk.Label(row4, text="按首个出价生成固定步长，后续每回合线性递增且不自动降价").pack(side="left")
 
         row5 = ttk.Frame(extra_box)
         row5.pack(fill="x", pady=(8, 0))
