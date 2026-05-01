@@ -1,6 +1,6 @@
 {
   "safety": {
-    "dry_run": true,
+    "dry_run": false,
     "failsafe": true,
     "bring_window_to_front": true,
     "move_pause_seconds": 0.08,
