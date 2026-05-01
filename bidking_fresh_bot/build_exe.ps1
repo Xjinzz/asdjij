@@ -23,6 +23,7 @@ python -m PyInstaller `
   --hidden-import rapidocr_onnxruntime.main `
   --hidden-import onnxruntime `
   --hidden-import pyautogui `
+  --collect-all numpy `
   --add-data "config.json;." `
   --add-data "price_config.json;." `
   --add-data "..\manual_bidking_advisor.py;." `

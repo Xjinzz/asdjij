@@ -1,6 +1,6 @@
 {
   "safety": {
-    "dry_run": false,
+    "dry_run": true,
     "failsafe": true,
     "bring_window_to_front": true,
     "move_pause_seconds": 0.08,
@@ -89,16 +89,16 @@
         "name": "快递盲盒堆",
         "point": {
           "origin": "left_bottom",
-          "x": 464,
-          "y": 710
+          "x": 690,
+          "y": 770
         }
       },
       "2": {
         "name": "废弃仓库",
         "point": {
           "origin": "left_bottom",
-          "x": 922,
-          "y": 764
+          "x": 1210,
+          "y": 896
         }
       },
       "3": {
