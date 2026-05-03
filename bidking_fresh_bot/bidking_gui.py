@@ -158,7 +158,7 @@ class BidKingApp:
         row1.pack(fill="x")
         ttk.Label(row1, text="快递跑刀单件价格").pack(side="left")
         ttk.Entry(row1, textvariable=self.express_multiplier_var, width=10).pack(side="left", padx=(8, 12))
-        ttk.Label(row1, text="快递跑刀会自动锁定地图为快递盲盒堆。出价=总物品数*单件价格，直接按个位价格出价").pack(side="left")
+        ttk.Label(row1, text="跑刀模式：出价=总物品数*单件价格，适用于快递盲盒堆、废弃仓库等地图").pack(side="left")
 
         row2 = ttk.Frame(extra_box)
         row2.pack(fill="x", pady=(8, 0))
@@ -300,8 +300,6 @@ class BidKingApp:
         runs_value = int(self.runs_var.get()) if self.runs_var.get().isdigit() and int(self.runs_var.get()) > 0 else 1
         selected_mode = MODE_OPTIONS.get(self.mode_var.get().strip(), "normal")
         selected_map = self.selected_map_key() or "4"
-        if selected_mode == "express":
-            selected_map = "1"
         selected_risk = RISK_OPTIONS.get(self.risk_var.get().strip(), "avg_price")
         selected_role = ROLE_OPTIONS.get(self.role_var.get().strip(), "ahmad")
         selected_tool_rounds = [round_no for round_no, var in self.tool_round_vars.items() if var.get()]
