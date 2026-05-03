@@ -342,8 +342,7 @@ class BidKingApp:
     def on_mode_changed(self) -> None:
         mode = MODE_OPTIONS.get(self.mode_var.get().strip(), "normal")
         if mode == "express":
-            self.map_var.set(f"1. {self.config['automation']['maps']['1']['name']}")
-            self.map_combo.state(["disabled"])
+            self.map_combo.state(["!disabled"])
             for var in self.tool_round_vars.values():
                 var.set(False)
         else:
